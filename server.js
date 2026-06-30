@@ -13,6 +13,7 @@ const articleRouter = require('./routes/articles')
 const authRouter = require('./routes/auth')
 
 const app = express()
+app.set('trust proxy', 1)
 
 console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'FOUND' : 'MISSING')
 
@@ -30,7 +31,9 @@ app.use(session({
     mongoUrl: process.env.MONGODB_URI
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
   }
 }))
 
