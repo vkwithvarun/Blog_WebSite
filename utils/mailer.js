@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
     },
     tls: {
         rejectUnauthorized: false // Helps prevent cloud hosting network drops
-    }
+    },
     family: 4
 })
 
