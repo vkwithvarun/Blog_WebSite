@@ -6,6 +6,7 @@ const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false, // true for port 465, false for other ports like 587
+    connectionTimeout: 10000, // Wait 10 seconds before timing out
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS // Make sure this is your 16-character Google App Password
@@ -13,6 +14,7 @@ const transporter = nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false // Helps prevent cloud hosting network drops
     }
+    family: 4
 })
 
 function generateOTP() {
