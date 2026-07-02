@@ -7,6 +7,7 @@ const { generateOTP, sendOTPEmail } = require('../utils/mailer')
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 router.get('/signup', (req, res) => {
+  // Clear of hideSearch variables since navbar uses opt-in 'showSearch' now
   res.render('auth/signup')
 })
 

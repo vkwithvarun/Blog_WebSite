@@ -45,6 +45,8 @@ app.use((req, res, next) => {
     error: req.flash('error'),
     success: req.flash('success')
   }
+  // Initialize showSearch as false by default so it stays hidden on auth pages/404s
+  res.locals.showSearch = false 
   next()
 })
 
@@ -70,6 +72,9 @@ app.get('/', async (req, res, next) => {
       .sort({ createdAt: -1 })
       .skip((page - 1) * PAGE_SIZE)
       .limit(PAGE_SIZE)
+
+    // FIXED: Forcing the visibility into the global template context block
+    res.locals.showSearch = true 
 
     res.render('articles/index', {
       articles,

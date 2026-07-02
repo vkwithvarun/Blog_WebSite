@@ -6,34 +6,140 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="/css/style.css">
 <title><%= article.title %> · DevBlog</title>
+<style>
+  /* Custom Neon/Dark Theme Styles matching the index feed page */
+  body {
+    background-color: #0b0f19;
+    color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Article Details Wrapper Card */
+  .article-view-card {
+    background-color: #181d28;
+    border: 2px solid #3caec3;
+    border-radius: 1.25rem;
+    box-shadow: 0 0 20px rgba(60, 174, 195, 0.15);
+    padding: 2.5rem;
+    margin-bottom: 4rem;
+  }
+
+  /* Main Glowing Header title */
+  .article-main-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .article-meta-date {
+    color: #717d93 !important;
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Cyberpunk Pill Tags */
+  .tag-badge {
+    background-color: #242b3b !important;
+    color: #a3b3cc !important;
+    border: 1px solid #333d52;
+    padding: 0.4rem 0.75rem;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: lowercase;
+    display: inline-block;
+  }
+
+  /* Content Body Text */
+  .article-content {
+    color: #ccd6e6;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    border-top: 1px solid #242b3b;
+    padding-top: 2rem;
+  }
+
+  /* Headers Inside Dynamic Markdown */
+  .article-content h1, .article-content h2, .article-content h3 {
+    color: #ffffff;
+    margin-top: 1.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  /* Custom Action Buttons */
+  .btn-all-articles {
+    background: linear-gradient(90deg, #6fe3f3, #8ea5f9);
+    border: none;
+    color: #0b0f19;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 0 15px rgba(111, 227, 243, 0.3);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-all-articles:hover {
+    background: linear-gradient(90deg, #8ea5f9, #6fe3f3);
+    box-shadow: 0 0 22px rgba(111, 227, 243, 0.6);
+    color: #0b0f19;
+  }
+
+  .admin-actions-bar {
+    border-bottom: 1px solid #242b3b;
+    padding-bottom: 1.5rem;
+  }
+</style>
 </head>
 <body>
 <%- include('../partials/navbar') %>
-<div class="container">
+
+<div class="container flex-grow-1 mt-4">
   <%- include('../partials/messages') %>
-  <h1 class="mb-1"><%= article.title %></h1>
-  <div class="text-muted mb-2"><%= article.createdAt.toLocaleDateString() %></div>
 
-  <% if (article.tags && article.tags.length) { %>
-    <div class="mb-3">
-      <% article.tags.forEach((tag) => { %>
-        <span class="badge bg-secondary me-1"><%= tag %></span>
-      <% }) %>
+  <div class="article-view-card">
+    <!-- Header Block Info -->
+    <h1 class="article-main-title"><%= article.title %></h1>
+    <div class="article-meta-date"><%= article.createdAt.toLocaleDateString() %></div>
+
+    <!-- Tags Render Container -->
+    <% if (article.tags && article.tags.length) { %>
+      <div class="mb-4 d-flex flex-wrap gap-2">
+        <% article.tags.forEach((tag) => { %>
+          <span class="badge tag-badge"><%= tag %></span>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <!-- Action Toolbar Utilities Links -->
+    <div class="d-flex justify-content-between align-items-center admin-actions-bar mb-4">
+      <a href="/" class="btn-all-articles">← All Articles</a>
+      
+      <% if (currentUser && article.author && article.author.toString() === currentUser.id) { %>
+        <div class="d-flex gap-2">
+          <a href="/articles/edit/<%= article.id %>" class="btn btn-outline-info btn-sm rounded-pill px-3">Edit</a>
+          <form action="/articles/<%= article.id %>?_method=DELETE" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">Delete</button>
+          </form>
+        </div>
+      <% } %>
     </div>
-  <% } %>
 
-  <a href="/" class="btn btn-secondary btn-sm">All Articles</a>
-  <% if (currentUser && article.author && article.author.toString() === currentUser.id) { %>
-    <a href="/articles/edit/<%= article.id %>" class="btn btn-info btn-sm">Edit</a>
-    <form action="/articles/<%= article.id %>?_method=DELETE" method="POST" class="d-inline">
-      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-    </form>
-  <% } %>
-
-  <div class="article-content mt-4">
-    <%- article.sanitizedHTML %>
+    <!-- Main Output HTML Content Container -->
+    <div class="article-content">
+      <%- article.sanitizedHTML %>
+    </div>
   </div>
 </div>
+
+<!-- FIXED: Correct path pointing to your scripts layout file -->
 <%- include('../partials/scripts') %>
 </body>
 </html>
