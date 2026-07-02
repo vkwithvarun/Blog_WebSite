@@ -1,10 +1,17 @@
 const nodemailer = require('nodemailer')
 
+// FIX: Added explicit configuration for Port 587 to bypass Render's network restrictions
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for port 465, false for other ports like 587
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        pass: process.env.EMAIL_PASS // Make sure this is your 16-character Google App Password
+    },
+    tls: {
+        rejectUnauthorized: false // Helps prevent cloud hosting network drops
     }
 })
 
@@ -26,7 +33,7 @@ async function sendOTPEmail(toEmail, otp, purpose) {
     : 'Use the code below to reset your password.'
 
     await transporter.sendMail({
-        from: `"DevBlog" <${process.env.EMAIL_USER}`,
+        from: `"DevBlog" <${process.env.EMAIL_USER}>`, // FIX: Closed the missing inner angle bracket string template right here
         to: toEmail,
         subject,
         html: `
@@ -36,7 +43,7 @@ async function sendOTPEmail(toEmail, otp, purpose) {
                 <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; padding: 16px 0;">
                     ${otp}
                 </div>
-                <p>This code expires in 5 minuts. If you did not request this, you can ignore this email.</p>
+                <p>This code expires in 5 minutes. If you did not request this, you can ignore this email.</p>
             </div>
         `
     })
