@@ -2,7 +2,6 @@ const nodemailer = require('nodemailer')
 
 // FIX: Added explicit configuration for Port 587 to bypass Render's network restrictions
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
     host: 'smtp.gmail.com',
     port: 587,
     secure: false, // true for port 465, false for other ports like 587
