@@ -1,5 +1,14 @@
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.BREVO_USER,
+        pass: process.env.BREVO_PASS
+    }
+});
 
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -18,8 +27,8 @@ async function sendOTPEmail(toEmail, otp, purpose) {
         ? 'Use the code below to verify your email and activate your account.'
         : 'Use the code below to reset your password.';
 
-    const { error } = await resend.emails.send({
-        from: 'DevBlog <onboarding@resend.dev>',
+    await transporter.sendMail({
+        from: '"DevBlog" <b0ac2a001@smtp-brevo.com>',
         to: toEmail,
         subject,
         html: `
@@ -33,8 +42,6 @@ async function sendOTPEmail(toEmail, otp, purpose) {
             </div>
         `
     });
-
-    if (error) throw error;
 }
 
 module.exports = { generateOTP, sendOTPEmail };
